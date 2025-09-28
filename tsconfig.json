@@ -3,6 +3,17 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "paths": {
+      "@db-uml/collab-core": [
+        "./dist/db-uml/collab-core"
+      ],
+      "@db-uml/domain-model": [
+        "./dist/db-uml/domain-model"
+      ],
+      "@db-uml/ui-diagram": [
+        "./dist/db-uml/ui-diagram"
+      ]
+    },
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -22,5 +33,31 @@
     "typeCheckHostBindings": true,
     "strictTemplates": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./projects/web/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/web/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/db-uml/ui-diagram/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/db-uml/ui-diagram/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/db-uml/domain-model/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/db-uml/domain-model/tsconfig.spec.json"
+    },
+    {
+      "path": "./projects/db-uml/collab-core/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/db-uml/collab-core/tsconfig.spec.json"
+    }
+  ]
 }

@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:libs": "ng build @db-uml/domain-model --watch & ng build @db-uml/collab-core --watch & ng build @db-uml/ui-diagram --watch",
+    "dev:api": "npm --workspace api run start:dev",
+    "build:api": "npm --workspace api run build"
   },
   "prettier": {
     "printWidth": 100,
@@ -32,6 +35,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular/build": "^20.3.2",
     "@angular/cli": "^20.3.2",
     "@angular/compiler-cli": "^20.3.0",
     "@types/jasmine": "~5.1.0",
@@ -41,6 +45,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^20.3.0",
     "typescript": "~5.9.2"
-  }
+  },
+  "workspaces": ["api"]
 }
