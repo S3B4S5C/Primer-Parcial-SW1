@@ -1,4 +1,5 @@
 import { AuthService } from './auth.service';
+import { RegisterDto } from 'src/projects/dto/register.dto';
 export declare class AuthController {
     private auth;
     constructor(auth: AuthService);
@@ -22,4 +23,11 @@ export declare class AuthController {
         createdAt: Date;
         updatedAt: Date;
     } | null>;
+    register(dto: RegisterDto): Promise<{
+        access_token: string;
+        user: {
+            id: string;
+            email: string;
+        };
+    }>;
 }

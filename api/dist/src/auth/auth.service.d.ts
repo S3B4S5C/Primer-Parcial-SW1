@@ -40,4 +40,15 @@ export declare class AuthService {
         createdAt: Date;
         updatedAt: Date;
     } | null>;
+    register(dto: {
+        email: string;
+        password: string;
+        name?: string;
+    }): Promise<{
+        access_token: string;
+        user: {
+            id: string;
+            email: string;
+        };
+    }>;
 }

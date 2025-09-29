@@ -12,19 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProjectDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateProjectDto {
-    workspaceId;
     name;
     description;
+    tags;
 }
 exports.CreateProjectDto = CreateProjectDto;
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateProjectDto.prototype, "workspaceId", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.MinLength)(2),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "name", void 0);
 __decorate([
@@ -32,4 +27,11 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.ArrayMaxSize)(20),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateProjectDto.prototype, "tags", void 0);
 //# sourceMappingURL=create-project.dto.js.map

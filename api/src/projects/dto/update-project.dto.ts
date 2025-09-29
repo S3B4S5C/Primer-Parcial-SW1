@@ -1,8 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateProjectDto } from './create-project.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString, MinLength, ArrayMaxSize } from 'class-validator';
 
-export class UpdateProjectDto extends PartialType(CreateProjectDto) {
+export class UpdateProjectDto {
+  @IsString() @MinLength(2) @IsOptional()
+  name?: string;
+
   @IsString() @IsOptional()
-  status?: 'ACTIVE' | 'ARCHIVED';
+  description?: string;
+
+  @IsArray() @IsString({ each: true }) @ArrayMaxSize(20) @IsOptional()
+  tags?: string[];
 }

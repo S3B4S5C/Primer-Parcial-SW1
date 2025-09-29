@@ -14,6 +14,8 @@ const config_1 = require("@nestjs/config");
 const prisma_module_1 = require("./prisma/prisma.module");
 const projects_module_1 = require("./projects/projects.module");
 const auth_module_1 = require("./auth/auth.module");
+const workspaces_module_1 = require("./workspaces/workspaces.module");
+const models_module_1 = require("./models/models.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,6 +26,8 @@ exports.AppModule = AppModule = __decorate([
             prisma_module_1.PrismaModule,
             projects_module_1.ProjectsModule,
             auth_module_1.AuthModule,
+            workspaces_module_1.WorkspacesModule,
+            models_module_1.ModelsModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

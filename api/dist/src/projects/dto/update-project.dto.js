@@ -10,16 +10,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateProjectDto = void 0;
-const mapped_types_1 = require("@nestjs/mapped-types");
-const create_project_dto_1 = require("./create-project.dto");
 const class_validator_1 = require("class-validator");
-class UpdateProjectDto extends (0, mapped_types_1.PartialType)(create_project_dto_1.CreateProjectDto) {
-    status;
+class UpdateProjectDto {
+    name;
+    description;
+    tags;
 }
 exports.UpdateProjectDto = UpdateProjectDto;
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MinLength)(2),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], UpdateProjectDto.prototype, "status", void 0);
+], UpdateProjectDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], UpdateProjectDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.ArrayMaxSize)(20),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateProjectDto.prototype, "tags", void 0);
 //# sourceMappingURL=update-project.dto.js.map

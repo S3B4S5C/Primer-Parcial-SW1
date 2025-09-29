@@ -11,10 +11,19 @@ export class AuthService {
   private _token = signal<string | null>(localStorage.getItem('token'));
   token = this._token.asReadonly();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('/api/auth/login', { email, password }).pipe(
+      tap(({ access_token }) => {
+        this._token.set(access_token);
+        localStorage.setItem('token', access_token);
+      })
+    );
+  }
+
+  register(email: string, password: string, name?: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>('/api/auth/register', { email, password, name }).pipe(
       tap(({ access_token }) => {
         this._token.set(access_token);
         localStorage.setItem('token', access_token);

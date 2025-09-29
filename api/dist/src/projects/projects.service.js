@@ -17,57 +17,176 @@ let ProjectsService = class ProjectsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async create(dto, userId) {
-        try {
-            return await this.prisma.project.create({
-                data: {
-                    name: dto.name,
-                    description: dto.description,
-                    workspace: { connect: { id: dto.workspaceId } },
-                    createdBy: { connect: { id: userId } },
-                },
-            });
-        }
-        catch (e) {
-            if (e.code === 'P2002') {
-                throw new common_1.BadRequestException('Ya existe un proyecto con ese nombre en este espacio.');
-            }
-            throw e;
+    async ensureTags(workspaceId, names) {
+        if (!names?.length)
+            return [];
+        const upserts = names.map(name => this.prisma.tag.upsert({
+            where: { workspaceId_name: { workspaceId, name } },
+            update: {},
+            create: { workspaceId, name },
+            select: { id: true, name: true },
+        }));
+        return Promise.all(upserts);
+    }
+    async syncProjectTags(projectId, workspaceId, names = []) {
+        const current = await this.prisma.projectTag.findMany({
+            where: { projectId },
+            select: { tagId: true, tag: { select: { name: true } } },
+        });
+        const currentNames = new Set(current.map(c => c.tag.name));
+        const targetNames = Array.from(new Set(names.map(n => n.trim()).filter(Boolean)));
+        const ensured = await this.ensureTags(workspaceId, targetNames);
+        const targetIds = new Set(ensured.map(e => e.id));
+        await this.prisma.projectTag.deleteMany({
+            where: { projectId, tagId: { notIn: Array.from(targetIds) } },
+        });
+        const toCreate = ensured
+            .filter(e => !current.find(c => c.tagId === e.id))
+            .map(e => ({ projectId, tagId: e.id }));
+        if (toCreate.length) {
+            await this.prisma.projectTag.createMany({ data: toCreate, skipDuplicates: true });
         }
     }
-    findAllByWorkspace(workspaceId) {
+    async checkWorkspaceQuota(workspaceId) {
+        const ws = await this.prisma.workspace.findUnique({
+            where: { id: workspaceId },
+            select: { settings: true },
+        });
+        const maxProjects = ws?.settings?.maxProjects;
+        if (!maxProjects)
+            return;
+        const count = await this.prisma.project.count({ where: { workspaceId, deletedAt: null } });
+        if (count >= maxProjects)
+            throw new common_1.ForbiddenException('Cuota de proyectos excedida en el workspace');
+    }
+    async audit(projectId, workspaceId, actorId, action, targetType, targetId, metadata) {
+        await this.prisma.auditLog.create({
+            data: { projectId, workspaceId, actorId, action: action, targetType, targetId, metadata },
+        });
+    }
+    async listAccessible(userId, workspaceId) {
+        if (workspaceId) {
+            const wsMember = await this.prisma.workspaceMember.findUnique({
+                where: { workspaceId_userId: { workspaceId, userId } },
+                select: { role: true },
+            });
+            if (wsMember && (wsMember.role === 'OWNER' || wsMember.role === 'ADMIN')) {
+                return this.prisma.project.findMany({
+                    where: { workspaceId, deletedAt: null },
+                    orderBy: { createdAt: 'desc' },
+                    include: { tags: { include: { tag: true } } },
+                });
+            }
+            return this.prisma.project.findMany({
+                where: {
+                    workspaceId,
+                    deletedAt: null,
+                    members: { some: { userId } },
+                },
+                orderBy: { createdAt: 'desc' },
+                include: { tags: { include: { tag: true } } },
+            });
+        }
         return this.prisma.project.findMany({
-            where: { workspaceId, deletedAt: null },
+            where: { deletedAt: null, members: { some: { userId } } },
             orderBy: { createdAt: 'desc' },
             include: { tags: { include: { tag: true } } },
         });
     }
-    async findOne(id) {
-        const project = await this.prisma.project.findUnique({ where: { id } });
-        if (!project)
+    async getByIdAuthorized(projectId, userId) {
+        const p = await this.prisma.project.findUnique({
+            where: { id: projectId },
+            include: {
+                members: { where: { userId }, select: { role: true } },
+                tags: { include: { tag: true } },
+            },
+        });
+        if (!p || p.deletedAt)
             throw new common_1.NotFoundException('Proyecto no encontrado');
-        return project;
+        if (p.members.length === 0)
+            throw new common_1.ForbiddenException('Sin acceso a este proyecto');
+        return p;
     }
-    async update(id, dto) {
-        return this.prisma.project.update({ where: { id }, data: dto });
+    async create(workspaceId, userId, dto) {
+        await this.checkWorkspaceQuota(workspaceId);
+        try {
+            const project = await this.prisma.project.create({
+                data: {
+                    workspaceId,
+                    name: dto.name.trim(),
+                    description: dto.description ?? null,
+                    createdById: userId,
+                    members: { create: { userId, role: 'OWNER' } },
+                },
+            });
+            await this.syncProjectTags(project.id, workspaceId, dto.tags ?? []);
+            await this.audit(project.id, workspaceId, userId, 'PROJECT_CREATE', 'Project', project.id, { name: project.name });
+            return this.prisma.project.findUnique({
+                where: { id: project.id },
+                include: { tags: { include: { tag: true } } },
+            });
+        }
+        catch (e) {
+            if (e.code === 'P2002')
+                throw new common_1.ConflictException('Ya existe un proyecto con ese nombre en el workspace');
+            throw e;
+        }
     }
-    archive(id) {
-        return this.prisma.project.update({
-            where: { id },
+    async updateMetadata(projectId, userId, dto) {
+        const project = await this.prisma.project.findUnique({ where: { id: projectId } });
+        if (!project || project.deletedAt)
+            throw new common_1.NotFoundException('Proyecto no encontrado');
+        try {
+            const updated = await this.prisma.project.update({
+                where: { id: projectId },
+                data: {
+                    name: dto.name?.trim(),
+                    description: dto.description ?? undefined,
+                },
+            });
+            if (dto.tags) {
+                await this.syncProjectTags(projectId, updated.workspaceId, dto.tags);
+            }
+            await this.audit(projectId, updated.workspaceId, userId, 'PROJECT_UPDATE', 'Project', projectId, dto);
+            return this.prisma.project.findUnique({
+                where: { id: projectId },
+                include: { tags: { include: { tag: true } } },
+            });
+        }
+        catch (e) {
+            if (e.code === 'P2002')
+                throw new common_1.ConflictException('Nombre duplicado en el workspace');
+            throw e;
+        }
+    }
+    async archive(projectId, userId) {
+        const p = await this.prisma.project.update({
+            where: { id: projectId },
             data: { status: 'ARCHIVED', archivedAt: new Date() },
         });
+        await this.audit(projectId, p.workspaceId, userId, 'PROJECT_ARCHIVE', 'Project', projectId);
+        return p;
     }
-    restore(id) {
-        return this.prisma.project.update({
-            where: { id },
+    async restore(projectId, userId) {
+        const p = await this.prisma.project.update({
+            where: { id: projectId },
             data: { status: 'ACTIVE', archivedAt: null },
         });
+        await this.audit(projectId, p.workspaceId, userId, 'PROJECT_RESTORE', 'Project', projectId);
+        return p;
     }
-    softDelete(id) {
-        return this.prisma.project.update({
-            where: { id },
+    async softDelete(projectId, userId) {
+        const p = await this.prisma.project.findUnique({ where: { id: projectId } });
+        if (!p || p.deletedAt)
+            throw new common_1.NotFoundException('Proyecto no encontrado');
+        if (p.legalHold)
+            throw new common_1.BadRequestException('El proyecto está bajo retención legal');
+        const del = await this.prisma.project.update({
+            where: { id: projectId },
             data: { deletedAt: new Date() },
         });
+        await this.audit(projectId, del.workspaceId, userId, 'PROJECT_DELETE', 'Project', projectId);
+        return del;
     }
 };
 exports.ProjectsService = ProjectsService;
