@@ -16,6 +16,9 @@ const projects_module_1 = require("./projects/projects.module");
 const auth_module_1 = require("./auth/auth.module");
 const workspaces_module_1 = require("./workspaces/workspaces.module");
 const models_module_1 = require("./models/models.module");
+const collaborators_module_1 = require("./collaborators/collaborators.module");
+const versions_module_1 = require("./versions/versions.module");
+const realtime_module_1 = require("./realtime/realtime.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -27,7 +30,10 @@ exports.AppModule = AppModule = __decorate([
             projects_module_1.ProjectsModule,
             auth_module_1.AuthModule,
             workspaces_module_1.WorkspacesModule,
-            models_module_1.ModelsModule
+            models_module_1.ModelsModule,
+            collaborators_module_1.CollaboratorsModule,
+            versions_module_1.VersionsModule,
+            realtime_module_1.RealtimeModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

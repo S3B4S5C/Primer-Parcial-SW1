@@ -1,0 +1,19 @@
+<header class="app-header">
+  <div class="header-content">
+    <div class="header-brand">
+      <h2>ModelEditor</h2>
+    </div>
+    
+    <nav class="header-nav">
+      <a routerLink="/app" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+        Proyectos
+      </a>
+    </nav>
+    
+    <div class="header-actions">
+      <button class="btn-outline" (click)="logout()">
+        Cerrar sesión
+      </button>
+    </div>
+  </div>
+</header>

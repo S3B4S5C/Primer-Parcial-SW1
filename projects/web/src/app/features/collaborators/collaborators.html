@@ -1,0 +1,158 @@
+<app-header></app-header>
+
+<div class="collaborators-container">
+  <div class="collaborators-header">
+    <div class="header-content">
+      <div class="breadcrumb">
+        <a (click)="goProjects()" class="breadcrumb-link">← Volver a Proyectos</a>
+      </div>
+      
+      <div class="header-title">
+        <h1>Colaboradores</h1>
+        <p class="text-muted">Gestiona quién puede acceder y editar este proyecto</p>
+      </div>
+      
+      <div class="header-actions">
+        <a [routerLink]="['/app/projects', projectId(), 'editor']" class="btn-primary">
+          Ir al editor
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="collaborators-content">
+    <div *ngIf="error()" class="error-banner">
+      <strong>Error:</strong> {{ error() }}
+    </div>
+
+    <div class="collaborators-grid">
+      <div class="members-section">
+        <app-card title="Miembros del proyecto">
+          <div class="members-table-container">
+            <table class="members-table">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let m of members()">
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">
+                        {{ (m.user.name || m.user.email).charAt(0).toUpperCase() }}
+                      </div>
+                      <span>{{ m.user.name || '—' }}</span>
+                    </div>
+                  </td>
+                  <td class="text-muted">{{ m.user.email }}</td>
+                  <td>
+                    <select 
+                      [value]="m.role" 
+                      #roleSel 
+                      (change)="changeRole(m.id, roleSel.value)"
+                      class="role-select">
+                      <option value="OWNER">Propietario</option>
+                      <option value="EDITOR">Editor</option>
+                      <option value="READER">Lector</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button 
+                      (click)="remove(m.id)" 
+                      class="btn-outline btn-xs text-error">
+                      Quitar
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <div *ngIf="members().length === 0" class="empty-members">
+              <p class="text-muted">No hay miembros en este proyecto</p>
+            </div>
+          </div>
+        </app-card>
+      </div>
+
+      <div class="add-section">
+        <app-card title="Agregar colaborador">
+          <form [formGroup]="addForm" (ngSubmit)="add()">
+            <app-form-field 
+              label="Buscar usuario" 
+              hint="Busca por nombre o email, o escribe un email para invitar"
+              [error]="addForm.controls.q.invalid && addForm.controls.q.touched ? 'Este campo es requerido' : undefined"
+              required>
+              <input 
+                type="text" 
+                formControlName="q" 
+                placeholder="paula@ejemplo.com" />
+            </app-form-field>
+            
+            <div class="search-results" *ngIf="results().length">
+              <div class="results-header">
+                <small class="text-muted">Usuarios encontrados:</small>
+              </div>
+              <div 
+                *ngFor="let u of results()" 
+                (click)="selectUser(u)" 
+                class="result-item">
+                <div class="user-avatar">
+                  {{ (u.name || u.email).charAt(0).toUpperCase() }}
+                </div>
+                <div class="user-details">
+                  <span class="user-name">{{ u.name || '—' }}</span>
+                  <span class="user-email text-muted">{{ u.email }}</span>
+                </div>
+              </div>
+            </div>
+
+            <app-form-field label="Rol">
+              <select formControlName="role">
+                <option value="EDITOR">Editor</option>
+                <option value="READER">Lector</option>
+                <option value="OWNER">Propietario</option>
+              </select>
+            </app-form-field>
+
+            <div class="form-actions">
+              <button 
+                type="submit" 
+                class="btn-primary full-width" 
+                [disabled]="addForm.invalid || adding()">
+                {{ adding() ? 'Agregando...' : 'Agregar colaborador' }}
+              </button>
+            </div>
+
+            <div class="hint-box">
+              <p class="text-muted">
+                <strong>Tip:</strong> También puedes invitar por email escribiendo directamente la dirección de correo.
+              </p>
+            </div>
+          </form>
+        </app-card>
+
+        <app-card title="Historial de cambios" class="audit-card">
+          <div class="audit-list">
+            <div *ngFor="let a of audit()" class="audit-item">
+              <div class="audit-action">
+                <code>{{ a.action }}</code>
+              </div>
+              <div class="audit-meta">
+                <span class="audit-date">{{ a.createdAt | date:'short' }}</span>
+                <span class="audit-details text-muted">{{ a.metadata | json }}</span>
+              </div>
+            </div>
+            
+            <div *ngIf="audit().length === 0" class="empty-audit">
+              <p class="text-muted">No hay actividad reciente</p>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>

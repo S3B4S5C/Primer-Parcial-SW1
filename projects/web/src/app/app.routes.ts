@@ -4,6 +4,9 @@ import { authGuard } from './core/guards/auth-guard';
 import { AuthComponent } from './features/auth/login/login';
 import { ProjectsComponent } from './features/projects/projects';
 import { ModelEditorComponent } from './features/editor/editor';
+import { CollaboratorsComponent } from './features/collaborators/collaborators';
+import { VersionsComponent } from './features/versions/versions';
+
 export const routes: Routes = [
   { path: 'login', component: AuthComponent },
   { path: 'auth', redirectTo: 'login', pathMatch: 'full' },
@@ -13,6 +16,17 @@ export const routes: Routes = [
     canActivate: [authGuard],
     component: ModelEditorComponent
   },
+  {
+    path: 'app/projects/:projectId/collaborators',
+    canActivate: [authGuard],
+    component: CollaboratorsComponent
+  },
+  {
+    path: 'app/projects/:projectId/versions',
+    canActivate: [authGuard],
+    component: VersionsComponent
+  },
+
   { path: '', pathMatch: 'full', redirectTo: 'app' },
   { path: '**', redirectTo: 'app' },
 

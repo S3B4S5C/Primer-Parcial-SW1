@@ -9,26 +9,26 @@ export declare class ProjectsController {
         tags: ({
             tag: {
                 id: string;
-                workspaceId: string;
                 name: string;
                 color: string | null;
+                workspaceId: string;
             };
         } & {
-            projectId: string;
             tagId: string;
+            projectId: string;
         })[];
     } & {
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     })[]>;
     get(id: string, req: Request): Promise<{
         members: {
@@ -37,114 +37,114 @@ export declare class ProjectsController {
         tags: ({
             tag: {
                 id: string;
-                workspaceId: string;
                 name: string;
                 color: string | null;
+                workspaceId: string;
             };
         } & {
-            projectId: string;
             tagId: string;
+            projectId: string;
         })[];
     } & {
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     createInWorkspace(workspaceId: string, dto: CreateProjectDto, req: Request): Promise<({
         tags: ({
             tag: {
                 id: string;
-                workspaceId: string;
                 name: string;
                 color: string | null;
+                workspaceId: string;
             };
         } & {
-            projectId: string;
             tagId: string;
+            projectId: string;
         })[];
     } & {
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     }) | null>;
     update(id: string, dto: UpdateProjectDto, req: Request): Promise<({
         tags: ({
             tag: {
                 id: string;
-                workspaceId: string;
                 name: string;
                 color: string | null;
+                workspaceId: string;
             };
         } & {
-            projectId: string;
             tagId: string;
+            projectId: string;
         })[];
     } & {
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     }) | null>;
     archive(id: string, req: Request): Promise<{
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     restore(id: string, req: Request): Promise<{
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
     remove(id: string, req: Request): Promise<{
         id: string;
-        workspaceId: string;
         name: string;
-        description: string | null;
         status: import("@prisma/client").$Enums.ProjectStatus;
+        createdAt: Date;
+        updatedAt: Date;
+        description: string | null;
+        createdById: string;
+        workspaceId: string;
         archivedAt: Date | null;
         deletedAt: Date | null;
         legalHold: boolean;
-        createdById: string;
-        createdAt: Date;
-        updatedAt: Date;
     }>;
 }

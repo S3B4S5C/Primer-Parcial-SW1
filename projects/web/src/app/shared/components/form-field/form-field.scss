@@ -1,0 +1,38 @@
+.form-field {
+  margin-bottom: var(--spacing-lg);
+  
+  &.form-field-error {
+    input, select, textarea {
+      border-color: var(--color-error);
+      
+      &:focus {
+        border-color: var(--color-error);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+  
+  .required {
+    color: var(--color-error);
+    margin-left: 2px;
+  }
+}
+
+.form-error {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.form-hint {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
+}

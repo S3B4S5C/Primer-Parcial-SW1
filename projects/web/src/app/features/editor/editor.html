@@ -1,1 +1,160 @@
-<p>editor works!</p>
+<app-header></app-header>
+
+<div class="editor-container">
+  <div class="editor-layout">
+    <div class="diagram-section">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <button type="button" class="btn-primary" (click)="addClass()">
+            + Clase
+          </button>
+          <button type="button" class="btn-outline" (click)="layout()">
+            Auto-Layout
+          </button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button type="button" class="btn-outline" (click)="undo()" [disabled]="!canUndo()">
+            Deshacer
+          </button>
+          <button type="button" class="btn-outline" (click)="redo()" [disabled]="!canRedo()">
+            Rehacer
+          </button>
+        </div>
+        
+        <div class="toolbar-group">
+          <button type="button" class="btn-secondary" (click)="save('manual')">
+            Guardar
+          </button>
+          <span class="status-text">{{ status() }}</span>
+        </div>
+      </div>
+      
+      <div #diagramDiv class="diagram-canvas"></div>
+    </div>
+
+    <div class="properties-section">
+      <app-card class="properties-panel">
+        <div slot="header">
+          <h3>Propiedades</h3>
+        </div>
+
+        <div *ngIf="selectedType() === 'node'">
+          <form [formGroup]="nodeForm" (ngSubmit)="applyNodeForm()">
+            <app-form-field 
+              label="Nombre de la clase" 
+              [error]="nodeForm.controls.name.invalid && nodeForm.controls.name.touched ? 'El nombre es requerido' : undefined"
+              required>
+              <input type="text" formControlName="name" placeholder="NombreClase" />
+            </app-form-field>
+
+            <app-form-field 
+              label="Estereotipo" 
+              hint="entity, valueObject, service, etc.">
+              <input type="text" formControlName="stereotype" placeholder="entity" />
+            </app-form-field>
+
+            <div class="attributes-section">
+              <div class="section-header">
+                <h4>Atributos</h4>
+                <button type="button" class="btn-outline btn-sm" (click)="addAttr()">
+                  + Atributo
+                </button>
+              </div>
+
+              <div formArrayName="attrs" class="attributes-list">
+                <div 
+                  *ngFor="let attrGroup of attrsFA().controls; let i = index" 
+                  [formGroupName]="i"
+                  class="attribute-row">
+                  
+                  <div class="attribute-fields">
+                    <app-form-field label="Nombre" [error]="attrGroup.get('name')?.invalid && attrGroup.get('name')?.touched ? 'Requerido' : undefined">
+                      <input type="text" formControlName="name" placeholder="campo" />
+                    </app-form-field>
+                    
+                    <app-form-field label="Tipo" [error]="attrGroup.get('type')?.invalid && attrGroup.get('type')?.touched ? 'Requerido' : undefined">
+                      <input type="text" formControlName="type" placeholder="string" />
+                    </app-form-field>
+                  </div>
+                  
+                  <div class="attribute-options">
+                    <label class="checkbox-label">
+                      <input type="checkbox" formControlName="pk" />
+                      <span>PK</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" formControlName="unique" />
+                      <span>Único</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" formControlName="nullable" />
+                      <span>Nullable</span>
+                    </label>
+                    
+                    <button 
+                      type="button" 
+                      class="btn-outline btn-xs text-error" 
+                      (click)="removeAttr(i)"
+                      title="Eliminar atributo">
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary full-width" [disabled]="nodeForm.invalid">
+                Aplicar cambios
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="selectedType() === 'link'">
+          <form [formGroup]="linkForm" (ngSubmit)="applyLinkForm()">
+            <app-form-field label="Tipo de relación">
+              <select formControlName="kind">
+                <option value="association">Asociación</option>
+                <option value="aggregation">Agregación</option>
+                <option value="composition">Composición</option>
+              </select>
+            </app-form-field>
+
+            <app-form-field 
+              label="Cardinalidad origen" 
+              hint="1, 0..1, N, 1..N">
+              <input type="text" formControlName="fromCard" placeholder="N" />
+            </app-form-field>
+
+            <app-form-field 
+              label="Cardinalidad destino" 
+              hint="1, 0..1, N, 1..N">
+              <input type="text" formControlName="toCard" placeholder="1" />
+            </app-form-field>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-primary full-width">
+                Aplicar cambios
+              </button>
+            </div>
+
+            <div class="hint-box">
+              <p class="text-muted">
+                <strong>Sugerencia:</strong> Si es N→1, se agregará automáticamente un FK en la clase origen.
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="selectedType() === null" class="empty-selection">
+          <h4>Selecciona un elemento</h4>
+          <p class="text-muted">
+            Haz clic en una clase para editar sus atributos, o en una relación para editar su tipo y cardinalidades.
+          </p>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>
