@@ -2,10 +2,11 @@ import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/co
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { WorkspacesService } from 'src/workspaces/workspaces.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwt: JwtService) {}
+  constructor(private prisma: PrismaService, private jwt: JwtService, private workspacesService: WorkspacesService) {}
 
   async validateUser(email: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
@@ -34,8 +35,9 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: { email, name: dto.name ?? null, passwordHash },
     });
+    await this.workspacesService.ensurePersonalWorkspace(user.id);
 
-    return this.login({ id: user.id, email: user.email }); // devuelve token como en /login
+    return this.login({ id: user.id, email: user.email }); 
   }
 
 }
