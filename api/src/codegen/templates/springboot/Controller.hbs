@@ -1,0 +1,36 @@
+package {{pkg}}.web;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import {{pkg}}.domain.{{e.name}};
+import {{pkg}}.service.{{e.name}}Service;
+
+@CrossOrigin
+@RestController
+@RequestMapping("/{{e.name.toLowerCase}}")
+public class {{e.name}}Controller {
+  private final {{e.name}}Service svc;
+  public {{e.name}}Controller({{e.name}}Service svc) { this.svc = svc; }
+
+  @GetMapping
+  public List<{{e.name}}> list() { return svc.findAll(); }
+
+  @GetMapping("/{id}")
+  public {{e.name}} get(@PathVariable {{e.idField.javaType}} id) {
+    return svc.findById(id).orElseThrow(() -> new NoSuchElementException("Not found"));
+  }
+
+  @PostMapping @ResponseStatus(HttpStatus.CREATED)
+  public {{e.name}} create(@RequestBody {{e.name}} body) { return svc.save(body); }
+
+  @PutMapping("/{id}")
+  public {{e.name}} update(@PathVariable {{e.idField.javaType}} id, @RequestBody {{e.name}} body) {
+    // naive: confía en el body.id; en real, setea body.id = id si quieres
+    return svc.save(body);
+  }
+
+  @DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void delete(@PathVariable {{e.idField.javaType}} id) { svc.delete(id); }
+}

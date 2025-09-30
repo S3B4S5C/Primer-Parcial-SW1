@@ -7,7 +7,7 @@
         <h1>Proyectos</h1>
         <p class="text-muted">Gestiona tus modelos de datos y colabora con tu equipo</p>
       </div>
-      
+
       <div class="workspace-selector">
         <app-form-field label="Workspace actual">
           <select [value]="selectedWsId()" (change)="onWsChanged($event)">
@@ -24,35 +24,33 @@
   </div>
 
   <div class="projects-content">
-    <div *ngIf="error()" class="error-banner">
-      <strong>Error:</strong> {{ error() }}
-    </div>
+    <div *ngIf="error()" class="error-banner"><strong>Error:</strong> {{ error() }}</div>
 
     <app-card title="Crear nuevo proyecto" class="create-project-card">
       <form [formGroup]="form" (ngSubmit)="create()">
         <div class="form-grid">
-          <app-form-field 
-            label="Nombre del proyecto" 
-            [error]="form.controls.name.invalid && form.controls.name.touched ? 'El nombre es requerido (mín. 2 caracteres)' : undefined"
-            required>
-            <input 
-              type="text" 
-              formControlName="name" 
-              placeholder="Mi proyecto de datos" />
+          <app-form-field
+            label="Nombre del proyecto"
+            [error]="
+              form.controls.name.invalid && form.controls.name.touched
+                ? 'El nombre es requerido (mín. 2 caracteres)'
+                : undefined
+            "
+            required
+          >
+            <input type="text" formControlName="name" placeholder="Mi proyecto de datos" />
           </app-form-field>
 
           <app-form-field label="Descripción" hint="Opcional">
-            <input 
-              type="text" 
-              formControlName="description" 
-              placeholder="Descripción del proyecto..." />
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="Descripción del proyecto..."
+            />
           </app-form-field>
 
           <app-form-field label="Tags" hint="Separados por comas">
-            <input 
-              type="text" 
-              formControlName="tags" 
-              placeholder="backend, api, usuarios" />
+            <input type="text" formControlName="tags" placeholder="backend, api, usuarios" />
           </app-form-field>
         </div>
 
@@ -65,11 +63,7 @@
     </app-card>
 
     <div class="projects-grid">
-      <app-card 
-        *ngFor="let project of projects()" 
-        [hover]="true"
-        class="project-card">
-        
+      <app-card *ngFor="let project of projects()" [hover]="true" class="project-card">
         <div slot="header" class="project-header">
           <div class="project-info">
             <h3 class="project-name">{{ project.name }}</h3>
@@ -83,18 +77,24 @@
           <p *ngIf="project.description" class="project-description">
             {{ project.description }}
           </p>
-          
+
           <div class="project-tags" *ngIf="project.tags?.length">
             <span class="tag" *ngFor="let pt of project.tags">
               {{ pt.tag?.name }}
             </span>
           </div>
-          
+
           <div class="project-actions">
             <a [routerLink]="['/app/projects', project.id, 'editor']" class="btn-primary btn-sm">
               Editar modelo
             </a>
-            <a [routerLink]="['/app/projects', project.id, 'collaborators']" class="btn-outline btn-sm">
+            <a class="btn-primary btn-sm" [routerLink]="['/app/projects', project.id, 'artifacts']">
+              Artefactos
+            </a>
+            <a
+              [routerLink]="['/app/projects', project.id, 'collaborators']"
+              class="btn-outline btn-sm"
+            >
               Colaboradores
             </a>
             <a [routerLink]="['/app/projects', project.id, 'versions']" class="btn-outline btn-sm">
@@ -108,22 +108,25 @@
             <small class="text-muted">Última actualización: hace 2 días</small>
           </div>
           <div class="project-controls">
-            <button 
-              *ngIf="project.status === 'ACTIVE'" 
-              (click)="archive(project.id)" 
-              class="btn-outline btn-xs">
+            <button
+              *ngIf="project.status === 'ACTIVE'"
+              (click)="archive(project.id)"
+              class="btn-outline btn-xs"
+            >
               Archivar
             </button>
-            <button 
-              *ngIf="project.status === 'ARCHIVED'" 
-              (click)="restore(project.id)" 
-              class="btn-secondary btn-xs">
+            <button
+              *ngIf="project.status === 'ARCHIVED'"
+              (click)="restore(project.id)"
+              class="btn-secondary btn-xs"
+            >
               Restaurar
             </button>
-            <button 
-              (click)="remove(project.id)" 
+            <button
+              (click)="remove(project.id)"
               class="btn-outline btn-xs text-error"
-              onclick="return confirm('¿Estás seguro de eliminar este proyecto?')">
+              onclick="return confirm('¿Estás seguro de eliminar este proyecto?')"
+            >
               Eliminar
             </button>
           </div>

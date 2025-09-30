@@ -6,6 +6,7 @@ import { ProjectsComponent } from './features/projects/projects';
 import { ModelEditorComponent } from './features/editor/editor';
 import { CollaboratorsComponent } from './features/collaborators/collaborators';
 import { VersionsComponent } from './features/versions/versions';
+import { ArtifactsComponent } from './features/artifacts/artifacts';
 
 export const routes: Routes = [
   { path: 'login', component: AuthComponent },
@@ -25,6 +26,11 @@ export const routes: Routes = [
     path: 'app/projects/:projectId/versions',
     canActivate: [authGuard],
     component: VersionsComponent
+  },
+  {
+    path: 'app/projects/:projectId/artifacts',
+    canActivate: [authGuard],
+    component: ArtifactsComponent
   },
 
   { path: '', pathMatch: 'full', redirectTo: 'app' },

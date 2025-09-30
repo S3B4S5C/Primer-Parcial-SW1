@@ -10,6 +10,7 @@ import { ModelsModule } from './models/models.module'
 import { CollaboratorsModule } from './collaborators/collaborators.module';
 import { VersionsModule } from './versions/versions.module';
 import { RealtimeModule } from './realtime/realtime.module';
+import { CodegenModule } from './codegen/codegen.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,7 +21,8 @@ import { RealtimeModule } from './realtime/realtime.module';
     ModelsModule,
     CollaboratorsModule,
     VersionsModule,
-    RealtimeModule
+    RealtimeModule,
+    CodegenModule
   ],
   controllers: [AppController],
   providers: [AppService],
