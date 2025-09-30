@@ -1,0 +1,37 @@
+# koyeb.yaml
+name: modeleditor
+services:
+  - name: api
+    type: web
+    ports:
+      - port: 3000
+        protocol: http
+    env:
+      - key: PORT
+        value: "3000"
+      - key: DATABASE_URL
+        value: "postgresql://...sslmode=require" # Neon
+      - key: JWT_SECRET
+        value: "cambia-esto"
+      - key: CORS_ORIGINS
+        value: "https://<tu-project>.web.app,https://<tu-project>.firebaseapp.com"
+      - key: STORAGE_PROVIDER
+        value: "r2"
+      - key: R2_ACCOUNT_ID
+        value: "<tu-account-id>"
+      - key: R2_ACCESS_KEY_ID
+        value: "<tu-access-key>"
+      - key: R2_SECRET_ACCESS_KEY
+        value: "<tu-secret>"
+      - key: R2_BUCKET
+        value: "modeleditor-artifacts"
+      - key: R2_ENDPOINT
+        value: "https://<accountid>.r2.cloudflarestorage.com"
+    routes:
+      - path: /
+        port: 3000
+    docker:
+      dockerfile: api/Dockerfile
+    regions:
+      - fra   # o was
+    # Koyeb free = 1 servicio; puede hibernar si está inactivo

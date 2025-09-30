@@ -3,6 +3,10 @@
   "version": "0.0.1",
   "description": "",
   "author": "",
+  "engines": {
+    "node": "20.x"
+  },
+  "packageManager": "pnpm@9.12.0",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -18,7 +22,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "ts-node --transpile-only prisma/seed.ts"
+    "seed": "ts-node --transpile-only prisma/seed.ts",
+    "prisma:generate": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
