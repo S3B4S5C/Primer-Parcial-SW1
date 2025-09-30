@@ -7,5 +7,6 @@ import { WorkspacesController } from './workspaces.controller';
   imports: [PrismaModule],
   providers: [WorkspacesService],
   controllers: [WorkspacesController],
+  exports: [WorkspacesService],
 })
 export class WorkspacesModule {}

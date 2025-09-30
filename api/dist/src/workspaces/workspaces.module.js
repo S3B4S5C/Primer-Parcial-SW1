@@ -19,6 +19,7 @@ exports.WorkspacesModule = WorkspacesModule = __decorate([
         imports: [prisma_module_1.PrismaModule],
         providers: [workspaces_service_1.WorkspacesService],
         controllers: [workspaces_controller_1.WorkspacesController],
+        exports: [workspaces_service_1.WorkspacesService],
     })
 ], WorkspacesModule);
 //# sourceMappingURL=workspaces.module.js.map

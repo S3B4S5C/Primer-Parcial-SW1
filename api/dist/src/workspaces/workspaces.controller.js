@@ -25,6 +25,12 @@ let WorkspacesController = class WorkspacesController {
         const userId = req.user.userId;
         return this.svc.listForUser(userId);
     }
+    async mine(req) {
+        return this.svc.listMine(req.user.id);
+    }
+    async personal(req) {
+        return this.svc.ensurePersonalWorkspace(req.user.id);
+    }
 };
 exports.WorkspacesController = WorkspacesController;
 __decorate([
@@ -34,6 +40,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], WorkspacesController.prototype, "list", null);
+__decorate([
+    (0, common_1.Get)('mine'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], WorkspacesController.prototype, "mine", null);
+__decorate([
+    (0, common_1.Post)('personal'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], WorkspacesController.prototype, "personal", null);
 exports.WorkspacesController = WorkspacesController = __decorate([
     (0, common_1.UseGuards)(guards_1.JwtAuthGuard),
     (0, common_1.Controller)('workspaces'),

@@ -36,6 +36,38 @@ let WorkspacesService = class WorkspacesService {
             projectCount: r._count.projects,
         }));
     }
+    async ensurePersonalWorkspace(userId) {
+        let ws = await this.prisma.workspace.findFirst({
+            where: { createdById: userId, name: 'Personal' },
+        });
+        if (ws)
+            return ws;
+        const base = `u-${userId.slice(0, 8)}`;
+        let slug = base;
+        let i = 1;
+        while (await this.prisma.workspace.findUnique({ where: { slug } })) {
+            slug = `${base}-${i++}`;
+        }
+        ws = await this.prisma.workspace.create({
+            data: {
+                name: 'Personal',
+                slug,
+                description: 'Tu espacio personal',
+                createdById: userId,
+                settings: { type: 'personal' },
+            },
+        });
+        await this.prisma.workspaceMember.create({
+            data: { workspaceId: ws.id, userId, role: 'OWNER' },
+        });
+        return ws;
+    }
+    async listMine(userId) {
+        return this.prisma.workspace.findMany({
+            where: { members: { some: { userId } } },
+            orderBy: { createdAt: 'asc' },
+        });
+    }
 };
 exports.WorkspacesService = WorkspacesService;
 exports.WorkspacesService = WorkspacesService = __decorate([

@@ -47,12 +47,15 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = __importStar(require("bcryptjs"));
 const jwt_1 = require("@nestjs/jwt");
+const workspaces_service_1 = require("../workspaces/workspaces.service");
 let AuthService = class AuthService {
     prisma;
     jwt;
-    constructor(prisma, jwt) {
+    workspacesService;
+    constructor(prisma, jwt, workspacesService) {
         this.prisma = prisma;
         this.jwt = jwt;
+        this.workspacesService = workspacesService;
     }
     async validateUser(email, password) {
         const user = await this.prisma.user.findUnique({ where: { email } });
@@ -80,12 +83,13 @@ let AuthService = class AuthService {
         const user = await this.prisma.user.create({
             data: { email, name: dto.name ?? null, passwordHash },
         });
+        await this.workspacesService.ensurePersonalWorkspace(user.id);
         return this.login({ id: user.id, email: user.email });
     }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService, jwt_1.JwtService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, jwt_1.JwtService, workspaces_service_1.WorkspacesService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map
