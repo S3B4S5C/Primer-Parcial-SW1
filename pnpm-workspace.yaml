@@ -1,4 +1,0 @@
-packages:
-  - "api"          # tu NestJS (tiene su propio package.json)
-  - "packages/*"   # opcional, por si luego agregas libs
-  - "projects/*"   # opcional; solo contará si alguna carpeta tiene package.json

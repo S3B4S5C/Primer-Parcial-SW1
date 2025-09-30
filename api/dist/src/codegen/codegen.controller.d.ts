@@ -9,21 +9,21 @@ export declare class CodegenController {
         ok: boolean;
         artifacts: {
             id: string;
+            createdAt: Date;
             type: import("@prisma/client").$Enums.ArtifactType;
             storageKey: string;
-            createdAt: Date;
         }[];
     }>;
     list(projectId: string): Promise<{
         sizeBytes: string | null;
         id: string;
+        createdAt: Date;
         modelVersionId: string | null;
-        codegenConfigId: string | null;
         type: import("@prisma/client").$Enums.ArtifactType;
+        codegenConfigId: string | null;
         storageBucket: string;
         storageKey: string;
         checksumSha256: string | null;
-        createdAt: Date;
     }[]>;
     download(projectId: string, artifactId: string, res: Response): Promise<void>;
 }
