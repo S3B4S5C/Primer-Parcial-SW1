@@ -1,7 +1,9 @@
 // src/app/core/realtime.service.ts
 import { Injectable, signal } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-
+import { environment
+  
+ } from '../../../environments/environment.prod';
 @Injectable({ providedIn: 'root' })
 export class RealtimeService {
   private socket?: Socket;
@@ -9,7 +11,7 @@ export class RealtimeService {
 
   connectWithToken(token: string) {
     if (this.socket) return;
-    this.socket = io('/ws', {
+    this.socket = io(environment.wsUrl, {
       transports: ['websocket'],
       path: '/socket.io',
       auth: { token }
