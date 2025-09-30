@@ -308,7 +308,7 @@ let CodegenService = class CodegenService {
     renderPostman({ entities }) {
         const variable = [{ key: 'baseUrl', value: 'http://localhost:8080', type: 'string' }];
         const item = entities.map((e) => {
-            const base = `{{baseUrl}}/${e.route}`;
+            const base = `{{baseUrl}}/api/${e.route}`;
             return {
                 name: e.name,
                 item: [

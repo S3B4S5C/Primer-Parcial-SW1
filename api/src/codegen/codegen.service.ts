@@ -311,7 +311,7 @@ export class CodegenService {
     private renderPostman({ entities }: any) {
         const variable = [{ key: 'baseUrl', value: 'http://localhost:8080', type: 'string' }];
         const item = entities.map((e: any) => {
-            const base = `{{baseUrl}}/${e.route}`;
+            const base = `{{baseUrl}}/api/${e.route}`; 
             return {
                 name: e.name,
                 item: [
@@ -325,6 +325,7 @@ export class CodegenService {
         });
         return { info: { name: 'ModelEditor – API', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json' }, variable, item };
     }
+
 
     private tpl(relPath: string, ctx: any) {
         const fs = require('node:fs');
@@ -358,7 +359,7 @@ export class CodegenService {
             Checked:
             - ${fromDist}
             - ${fromSrc}`);
-                    }
+        }
 
         const src = fs.readFileSync(full, 'utf-8');
         const compiled = Handlebars.compile(src, { noEscape: true });
